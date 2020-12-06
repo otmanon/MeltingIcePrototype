@@ -5,8 +5,8 @@ maxArea = 0.1;  %maximum triangle area for remesher
 bboxH = 10; %bounding box length
 bboxW = 20; %bounding box width
 
-c = 0.000; %surface tension
-dt = 0.005; %timestep size
+c = 0.0; %surface tension
+dt = 0.01; %timestep size
 bbT = -10; %boundary temperature
 numBumps = 1 ;  %Controls number of bumps on the line... keep this a multiple of 2. If you want to make it an odd number, it'll look weird unless you go to disturbedPlanerSetUp.m, and change the cos to a sin in the "perturbStraightLine" function
 bumpSize = 0.5; %Controls size of bumps. Keep between 0 to 0.5... otherwise it's too big
@@ -44,7 +44,7 @@ for step = 1:10000
     drawnow;
 
     if mod(step, 10) == 1
-        figgif(strcat(strcat("gifs/snowflakest", num2str(c)), "numBumps",num2str(numBumps), ".gif"));
+   %     figgif(strcat(strcat("../gifs/snowflakest", num2str(c)), "numBumps",num2str(numBumps), ".gif"));
     end
     
 end
