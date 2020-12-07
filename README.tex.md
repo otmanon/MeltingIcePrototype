@@ -30,11 +30,35 @@ $$
 T(\boldsymbol{x}) = T_M \quad \quad \quad \boldsymbol{x}  \in \Gamma
 $$
 
-Where $T_M = 273\degree K = 0\degree C$ for ice.This is a completely reasonable answer, and works well for modelling large scale freezing and melting processes, such as an ice sculpture melting, or the  freezing of a lake starting from the top and going downwards. However, many of the interesting visual frost phenomena we observe occur at a smaller scale, where surface tension of the ice plays a non-negligible role. You can think of surface tension as being a force present in the ice that tries to keep the surface as smooth as possible. Surface tension is easily modelled by the Gibbs-Thomson equation, which simply replaces the temperature equation above with the following:
+Where $T_M = 273\degree K = 0\degree C$ for ice. This is a completely reasonable answer, and works well for modelling large scale freezing and melting processes, such as an ice sculpture melting, or the  freezing of a lake starting from the top and going downwards. However, many of the interesting visual frost phenomena we observe occur at a smaller scale, where surface tension of the ice plays a non-negligible role. You can think of surface tension as being a force present in the ice that tries to keep the surface as smooth as possible. Surface tension is easily modelled by the Gibbs-Thomson equation, which simply replaces the temperature equation above with the following:
 
 $$
-T(\boldsymbol{x}) = T_M(1 - \sigma \kappa )\quad \quad \quad \boldsymbol{x}  \in \Gamma
-$$
+T(\boldsymbol{x}) = T_M(1 - \sigma \kappa )\quad \quad \quad \boldsymbol{x}  \in \Gamma $$
+
 Where $\sigma$ represents the strength of the surface tension force and is often called the capillary length, $\kappa$ represents curvature (positive if the center of curvature is inside the solid, negative outside). Let's gain some intuition about this formula. Assume $\sigma$ is constant $\sigma = 0.002$. Imagine a 2D scenario where your interface is represented as a straight line, $\Gamma(\boldsymbol{x}) = 0$. Now let's say the interface is perturbed by a sine wave, so now your interface is given by the equation $\Gamma(\boldsymbol{x}) = sin(f\boldsymbol{x})$ where f represents frequency. You can convince yourself that $f$ implicitly encodes the curvature along the sine wave. 
  If you have a very low frequency $f \approx 0$, then you can see that the curvature along the peaks of your sin wave will be very very small. This means the temperature according to Gibbs-Thomson along your sine wave is close to the bulk melting temperature $T_M$. In fact, if the curvature is zero, we get back our planar interface where the curvature everywhere is zero and the melting temperature is then *exactly* the bulk melting temperature $T_M$. However, if you have a high frequency $f >> 0$, you'll have a lot of waves in a small area and your curvature will be very, very high along the peaks of your sin waves. Plugging this information into the Gibbs-Thomson equation, we can see that surface tension will have a non-negligible effect, ie the temperature at the interface will not be the same as the bulk melting temperature $T_M$, but will in fact be lower at the peaks, and higher at the crests.
 
+### Quasi-Steady State Assumption
+Before we talk about the discretization, we will simplify the diffusion equation in the first section:
+$$
+ \frac{\partial T(\boldsymbol{x})}{\partial t} = C \Delta T(\boldsymbol{x})  \quad \quad \quad  \boldsymbol{x} \in \Omega
+$$
+
+Because it takes much more energy to freeze a water molecule than to heat it up, or alternatively because in general the interface motion is MUCH slower than the heat diffusion process, we can assume that as soon as the ice melts, the heat released from that melt is immediately dissipated perfectly into it's environment. This allows us to reduce the diffusion equation above to the Laplace equation:
+$$
+\Delta T(\boldsymbol{x}) = 0 \quad \quad \quad  \boldsymbol{x} \in \Omega
+$$
+
+This is an assumption that is used very often in crystal growth physics/math literature, both for numerical solutions and analytical ones. This is a powerful assumption, as we can now say that the temperature field is harmonic in the domain. This now means, to determine the temperature at any point in time, we *only* need the boundary conditions of our problem, we no longer require the temperature field at previous points in time.
+
+## The Discretization
+In summary, these are the three equations that will govern our freezing process:
+$$
+\begin{cases}
+\Delta T= 0& \quad \quad \quad  \boldsymbol{x}  \in \Omega_s, \Omega_l \\
+V_n =D \frac{\partial T} {\partial \boldsymbol{n} }& \quad \quad \quad \boldsymbol{x} \in \Gamma \\
+T = T_M(1 - \sigma \kappa )&\quad \quad \quad \boldsymbol{x}  \in \Omega_s, \Omega_l
+\end{cases}
+$$
+
+We will only be working in a 2D domain. We discretize our volumetric domain with triangles, where the interface is a set of edges shared by triangles in the solid and liquid domain. We assume our temperature field is piecewise linear over the 2D domain, a temperature is assigned to each triangle vertex(including vertices along the interface), and is interpolated using barycentric coordinate shape functions for general points in our domain.
