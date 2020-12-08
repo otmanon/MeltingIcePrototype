@@ -87,7 +87,7 @@ Our overall algorithm for the whole simulation looks like this:
 ### Solving Laplace Equation
 We need to solve the Laplace equation on our triangle mesh, with appropriate boundary conditions given by the Gibbs Thomson equation, as well as any sources we wish to model in our environment.  We will assume that  our ice is fully submerged in a bounding box. We will set the temperature at each vertex on the boundary of our bounding box to have a set value of $-10 \degree C$. This is like imagining our little box is constantly pressed between 4 super cold solid plates whose temperature is fixed at -10. Then, for each vertex on the sold-liquid interface we will find the mean curvature. Note that the contour of our solid is the interface, and if our domain is discretized with a triangle mesh, then the contour is discretized with a polygonal curve. Calculating the curvature in 2D is trivial: to find the signed curvature at a given node, we can find the exterior angle made by it's two incident edges, as shown in assignment 7. 
 
-![](https://i.imgur.com/htcdp1m.jpg =400x200)
+![](https://i.imgur.com/htcdp1m.jpg)
 
 To solve the Laplace equation with these Dirichlet Boundary conditions, we will instead work with the equivalent problem of minimizing an energy functional. The corresponding energy functional that must be minimized is a little bit like an antiderivative to the Laplace equation:
 $$
