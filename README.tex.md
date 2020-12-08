@@ -133,8 +133,11 @@ This also implies that we don't even need to *mesh* our domain in the first plac
 
 ### Final Notes
 You might be thinking that nothing we have modelled here explains why dendritic growth happens. The answer is that you're right, nothing mentioned here explicitly models unstable dendritic growth, but rather this unstable growht arises implicitly from these equations. It turns out that when solving the heat equation, the temperature gradient is higher in areas with high curvature! Because interface motion is directly proportional to the temperature gradient, regions of high curvature will therefore move faster than areas of low curvature. This only makes our geometry have even HIGHER curvature the next timestep, and the process repeats. That is how this instability occurs. 
+
 ![enter image description here](https://media.giphy.com/media/5McygFmeVdQk1Bd3Mi/giphy.gif) 
+
 ![enter image description here](https://media.giphy.com/media/KgZqEFOfiL3qCjzozQ/giphy.gif)
+
 ## How to Run The Assignment Code
 All the code is written in matlab. You need gptoolbox as well as the triangle extension. To find details on how to install the triangle extension, check it out here. If you're on windows, note I attached a precompiled triangle binary to my submission. Just go to `path_to_triangle.m` and change the path defined in variable `s` to be where `s = ./`
  
