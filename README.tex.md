@@ -78,7 +78,7 @@ We need to solve the Laplace equation on our triangle mesh, with appropriate bou
 
 To solve the Laplace equation with these Dirichlet Boundary conditions, we will instead work with the equivalent problem of minimizing an energy functional. The corresponding energy functional that must be minimized is a little bit like an antiderivative to the Laplace equation:
 $$
-\boldsymbol v^* = \min_\boldsymbol{v} \boldsymbol v \boldsymbol C \boldsymbol v^T
+\boldsymbol v^* = \min_{\boldsymbol{v}} \boldsymbol v^T \boldsymbol C \boldsymbol v
 $$
 
 Where $\boldsymbol C$ is the cotan Laplacian matrix.  See the libigl tutorial on how to derive this! We can use `mqwf` from lilbigl to solve this energy minimization problem.
