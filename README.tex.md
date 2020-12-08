@@ -1,4 +1,4 @@
-# Freezing Using Finite Elements
+# Dendritic Freezing Using Finite Elements
 This project aims to model freezing by using Finite Element Meshes.  Freezing occurs when a water particle collides with the surface of a pre-existing ice structure, has the correct temperature profile to freeze (mainly that it is below the freezing temperature of water) *and* it can find an appropriate bonding spot to attach itself to said surface.  Unpacking this, we will see there are three main main contributions to the freezing process, the transportation and motion of a free water particle through space, the transportation of heat through space, and finally the ability for the particle to find a bonding location in the ice. 
 
 Usually, freezing occurs in scenarios where one of these three processes are slower than the others. For example, if particles attach immediately to the surface with no difficulty and we are in a medium that conducts heat instantly, the entire process is limited by the particle motion in that medium. If we are in a super saturated medium (so particles are readily available everywhere) and heat conducts instantly through the medium, the freezing process is limited by the kinetics of the freezing process. 
@@ -112,10 +112,14 @@ Finally, after all that hard work, we note that if the interface is moved to muc
 
 This also implies that we don't even need to *mesh* our domain in the first place. If the temperature at each point only depends on the boundary, why spend all that time remeshing. If you were thinking this, you'd be absolutely right, and this is the next step in this project, to make this work with the boundary element method. Note that a similar problem to this (with the same equations) has already been solved with BEM in this paper. 
 
+### Final Notes
+You might be thinking that nothing we have modelled here explains why dendritic growth happens. The answer is that you're right, nothing mentioned here explicitly models unstable dendritic growth, but rather this unstable growht arises implicitly from these equations. It turns out that when solving the heat equation, the temperature gradient is higher in areas with high curvature! Because interface motion is directly proportional to the temperature gradient, regions of high curvature will therefore move faster than areas of low curvature. This only makes our geometry have even HIGHER curvature the next timestep, and the process repeats. That is how this instability occurs. 
+
 
 ## How to Run The Assignment Code
 All the code is written in matlab. You need gptoolbox as well as the triangle extension. To find details on how to install the triangle extension, check it out here. If you're on windows, note I attached a precompiled triangle binary to my submission. Just go to `path_to_triangle.m` and change the path defined in variable `s` to be where `s = ./`
  
  To run the code, simply run either `dendriticGrowth_box.m` , for an ice crystal submerged in a liquid box as described above, or `dendriticGrowth_line.m` for a slightly different and modified problem to the one above, but most of the physics is still the same.
- 
 
+
+Note you can vary around various parameters at the top of each of these files to change the conditions. These parameters are surface tension, timestep length, bounding box temperature (set this to 10 if you want to see melting), maximum triangle area, and some more. Note that some configurations will crash our remesher.
