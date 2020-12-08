@@ -1,7 +1,11 @@
 # Dendritic Freezing Using Finite Elements
 This project aims to model freezing by using Finite Element Meshes. Specifically we aim to model some common branching/dendritic phenomena we observe in winter sceneries.
 
-![enter image description here](https://i.pinimg.com/originals/c8/ef/3b/c8ef3bab645b5d451d3e44e89b2c8322.jpg =300x300)![enter image description here](https://i.imgur.com/XKAA6Wy.png =400x250)
+
+
+![enter image description here](https://i.pinimg.com/originals/c8/ef/3b/c8ef3bab645b5d451d3e44e89b2c8322.jpg =300x300)
+
+![enter image description here](https://i.imgur.com/XKAA6Wy.png =400x250)
 
 
 
@@ -21,7 +25,7 @@ $$
 Where $T(\boldsymbol{x})$ is the temperature at a point $\boldsymbol{x}$ in our domain $\Omega$, $C$ is a constant that includes specific heat capacity, density, and conductance constants, a negative sign, the $\Delta$ operator represents the Laplacian at that point, and $q(\boldsymbol{x})$ represents any sources or sinks present in our domain (maybe a point in space continuously emits heat, like a lightbulb). The equation above is a standard diffusion equation, and to gain intuition for it, consider a single (non-source) point in space. The temperature (or whatever quantity is diffusing) at that point in space will only change if the temperature at the points around it is different than its own. In this case,  according to Fourier's law,  $\boldsymbol{\phi} = - k \nabla T$, the heat flux $\phi$ points  from high temperatures to low temperatures, and the speed at which heat will go from high temperatures to low temperatures is modulated by the conductance $k$.  Maybe better intuition for this is if you think of the Laplacian as taking an average of neighboring locations, then the temperature at any point will change to match the average temperature at it's neighborhood. 
 Furthermore, for the time being, let's just assume sources/sinks $q(\boldsymbol{x})$ are nonexistent, and instead we can model them by setting dirichlet boundary conditions to the above equation.
 
-![Heat diffusion occurring in a square domain. Red squares are hot regions, blue squares are cold regions. This process will continue until the system reaches a steady state and all regions are are close to the same temperature as possible, given the boundary conditions on the domain.](https://i.imgur.com/3AMdJOq.gif =400x400)
+![enter image description here](https://i.imgur.com/3AMdJOq.gif =400x400)
 
 ### Interface Motion
 We can think of our domain $\Omega$ as being split into two sub-domains $\Omega_s$ and $\Omega_l$ for the solid and liquid domains respectively. We denote $\Gamma$ to represent the interface of the two domains, where one domain becomes the other. For each of these sub-domains, we need to solve the diffusion equation in the previous section. However, we also need to figure out how our interface $\Gamma$ is moving.  This has been studied for literally hundreds of years, and the equation governing the motion of the interface is as follows:
