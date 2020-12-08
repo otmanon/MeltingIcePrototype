@@ -1,9 +1,10 @@
 # Dendritic Freezing Using Finite Elements
-This project aims to model freezing by using Finite Element Meshes. Specifically we aim to model some common branching/dendritic phenomena we observe in winter sceneries, such as the ones below.
+This project aims to model freezing by using Finite Element Meshes. Specifically we aim to model some common branching/dendritic phenomena we observe in winter sceneries.
 
-![Frost](https://www.google.com/url?sa=i&url=https://www.pinterest.com/pin/440789882279128454/&psig=AOvVaw1R8e1Yk_JZQH2eupm_CZx8&ust=1607525714332000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCKjRmYzSvu0CFQAAAAAdAAAAABAD)
+![enter image description here](https://i.pinimg.com/originals/c8/ef/3b/c8ef3bab645b5d451d3e44e89b2c8322.jpg =300x300)![enter image description here](https://i.imgur.com/XKAA6Wy.png =400x250)
 
-![Snowflake](https://www.google.com/imgres?imgurl=http://www.snowcrystals.com/branching/i0120a001A.jpg&imgrefurl=http://www.snowcrystals.com/branching/branching.html&tbnid=8PYDHBguI3rJvM&vet=12ahUKEwi31-yd0r7tAhUUBKwKHS8tCssQMyhiegUIARCWAQ..i&docid=fq63g66G3Am6oM&w=1024&h=919&q=snowflake%20growth&ved=2ahUKEwi31-yd0r7tAhUUBKwKHS8tCssQMyhiegUIARCWAQ)
+
+
  Freezing occurs when a water particle collides with the surface of a pre-existing ice structure, has the correct temperature profile to freeze (mainly that it is below the freezing temperature of water) *and* it can find an appropriate bonding spot to attach itself to said surface.  Unpacking this, we will see there are three main main contributions to the freezing process, the transportation and motion of a free water particle through space, the transportation of heat through space, and finally the ability for the particle to find a bonding location in the ice. 
 
 Usually, freezing occurs in scenarios where one of these three processes are slower than the others. For example, if particles attach immediately to the surface with no difficulty and we are in a medium that conducts heat instantly, the entire process is limited by the particle motion in that medium. If we are in a super saturated medium (so particles are readily available everywhere) and heat conducts instantly through the medium, the freezing process is limited by the kinetics of the freezing process. 
@@ -19,6 +20,9 @@ $$
 
 Where $T(\boldsymbol{x})$ is the temperature at a point $\boldsymbol{x}$ in our domain $\Omega$, $C$ is a constant that includes specific heat capacity, density, and conductance constants, a negative sign, the $\Delta$ operator represents the Laplacian at that point, and $q(\boldsymbol{x})$ represents any sources or sinks present in our domain (maybe a point in space continuously emits heat, like a lightbulb). The equation above is a standard diffusion equation, and to gain intuition for it, consider a single (non-source) point in space. The temperature (or whatever quantity is diffusing) at that point in space will only change if the temperature at the points around it is different than its own. In this case,  according to Fourier's law,  $\boldsymbol{\phi} = - k \nabla T$, the heat flux $\phi$ points  from high temperatures to low temperatures, and the speed at which heat will go from high temperatures to low temperatures is modulated by the conductance $k$.  Maybe better intuition for this is if you think of the Laplacian as taking an average of neighboring locations, then the temperature at any point will change to match the average temperature at it's neighborhood. 
 Furthermore, for the time being, let's just assume sources/sinks $q(\boldsymbol{x})$ are nonexistent, and instead we can model them by setting dirichlet boundary conditions to the above equation.
+
+![Heat diffusion occurring in a square domain. Red squares are hot regions, blue squares are cold regions. This process will continue until the system reaches a steady state and all regions are are close to the same temperature as possible, given the boundary conditions on the domain.](https://i.imgur.com/3AMdJOq.gif =400x400)
+
 ### Interface Motion
 We can think of our domain $\Omega$ as being split into two sub-domains $\Omega_s$ and $\Omega_l$ for the solid and liquid domains respectively. We denote $\Gamma$ to represent the interface of the two domains, where one domain becomes the other. For each of these sub-domains, we need to solve the diffusion equation in the previous section. However, we also need to figure out how our interface $\Gamma$ is moving.  This has been studied for literally hundreds of years, and the equation governing the motion of the interface is as follows:
 $$
@@ -29,7 +33,7 @@ Where $\boldsymbol{v}(\boldsymbol{x})$ represents the velocity for a point on ou
 $$
 V_n=D (\nabla T |_s - \nabla T|_l)\cdot \boldsymbol{n(\boldsymbol{x})}  \quad \quad \quad \boldsymbol{x} \in \Gamma
 $$
-
+![enter image description here](https://i.imgur.com/SXMqDqG.png)
 ### Boundary Conditions and Melting/Freezing Temperature
 To solve the coupled system of equations given by heat diffusion and the stefan condition, we need to impose boundary conditions on our diffusion equation for points along our interface. In other words, what should the temperature at the interface always be equal to. Obviously, it makes sense to set this to the bulk melting/freezing temperature of ice:
 $$
@@ -69,6 +73,7 @@ $$
 
 We will only be working in a 2D domain. We discretize our volumetric domain with triangles, where the interface is a set of edges shared by triangles in the solid and liquid domain. We assume our temperature field is piecewise linear over the 2D domain, a temperature is assigned to each triangle vertex(including vertices along the interface), and is interpolated using barycentric coordinate shape functions for non-vertex points in our domain.
 
+![enter image description here](https://i.imgur.com/sbzPiHG.png)
 Our overall algorithm for the whole simulation looks like this:
 
     For Each Timestep in the Simulation, do:
@@ -79,7 +84,8 @@ Our overall algorithm for the whole simulation looks like this:
 
 
 ### Solving Laplace Equation
-We need to solve the Laplace equation on our triangle mesh, with appropriate boundary conditions given by the Gibbs Thomson equation, as well as any sources we wish to model in our environment.  We will assume that  our ice is fully submerged in a bounding box. We will set the temperature at each vertex on the boundary of our bounding box to have a set value of $-10 \degree C$. This is like imagining our little box is constantly pressed between 4 super cold solid plates whose temperature is fixed at -10. Then, for each vertex on the sold-liquid interface we will find the mean curvature. Note that the contour of our solid is the interface, and if our domain is discretized with a triangle mesh, then the contour is discretized with a polygonal curve. Calculating the curvature in 2D is trivial: to find the signed curvature at a given node, we can find the exterior angle made by it's two incident edges, as shown in assignment 8. 
+We need to solve the Laplace equation on our triangle mesh, with appropriate boundary conditions given by the Gibbs Thomson equation, as well as any sources we wish to model in our environment.  We will assume that  our ice is fully submerged in a bounding box. We will set the temperature at each vertex on the boundary of our bounding box to have a set value of $-10 \degree C$. This is like imagining our little box is constantly pressed between 4 super cold solid plates whose temperature is fixed at -10. Then, for each vertex on the sold-liquid interface we will find the mean curvature. Note that the contour of our solid is the interface, and if our domain is discretized with a triangle mesh, then the contour is discretized with a polygonal curve. Calculating the curvature in 2D is trivial: to find the signed curvature at a given node, we can find the exterior angle made by it's two incident edges, as shown in assignment 7. 
+![Calculating 2D discrete curvature, by using the exterior angle of a discrete curve](https://i.imgur.com/htcdp1m.jpg =400x200)
 
 To solve the Laplace equation with these Dirichlet Boundary conditions, we will instead work with the equivalent problem of minimizing an energy functional. The corresponding energy functional that must be minimized is a little bit like an antiderivative to the Laplace equation:
 $$
@@ -122,10 +128,12 @@ Finally, after all that hard work, we note that if the interface is moved to muc
 
 This also implies that we don't even need to *mesh* our domain in the first place. If the temperature at each point only depends on the boundary, why spend all that time remeshing. If you were thinking this, you'd be absolutely right, and this is the next step in this project, to make this work with the boundary element method. Note that a similar problem to this (with the same equations) has already been solved with BEM in this paper. 
 
+![Suggested boundary only discretization](https://i.imgur.com/yOFe26L.png)
 ### Final Notes
 You might be thinking that nothing we have modelled here explains why dendritic growth happens. The answer is that you're right, nothing mentioned here explicitly models unstable dendritic growth, but rather this unstable growht arises implicitly from these equations. It turns out that when solving the heat equation, the temperature gradient is higher in areas with high curvature! Because interface motion is directly proportional to the temperature gradient, regions of high curvature will therefore move faster than areas of low curvature. This only makes our geometry have even HIGHER curvature the next timestep, and the process repeats. That is how this instability occurs. 
 
-
+| ![enter image description here](https://media.giphy.com/media/5McygFmeVdQk1Bd3Mi/giphy.gif =600x300) 
+![enter image description here](https://media.giphy.com/media/KgZqEFOfiL3qCjzozQ/giphy.gif)
 ## How to Run The Assignment Code
 All the code is written in matlab. You need gptoolbox as well as the triangle extension. To find details on how to install the triangle extension, check it out here. If you're on windows, note I attached a precompiled triangle binary to my submission. Just go to `path_to_triangle.m` and change the path defined in variable `s` to be where `s = ./`
  
@@ -133,3 +141,4 @@ All the code is written in matlab. You need gptoolbox as well as the triangle ex
 
 
 Note you can vary around various parameters at the top of each of these files to change the conditions. These parameters are surface tension, timestep length, bounding box temperature (set this to 10 if you want to see melting), maximum triangle area, and some more. Note that some configurations will crash our remesher.
+
