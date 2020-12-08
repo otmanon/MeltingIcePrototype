@@ -19,6 +19,7 @@ We can think of our domain $\Omega$ as being split into two sub-domains $\Omega_
 $$
 \boldsymbol{v}(\boldsymbol{x}) \cdot \boldsymbol{n}(\boldsymbol{x}) =D \frac{\partial T} {\partial \boldsymbol n(\boldsymbol{x})} =D (\frac{\partial T} {\partial \boldsymbol n(\boldsymbol{x})} |_s - \frac{\partial T} {\partial \boldsymbol n(\boldsymbol{x})} |_l)  \quad \quad \quad \boldsymbol{x} \in \Gamma
 $$
+
 Where $\boldsymbol{v}(\boldsymbol{x})$ represents the velocity for a point on our interface $\Gamma$, $\boldsymbol{n}$ is the normal at that same point on our interface (pointing from the solid domain to the liquid), D is a constant that includes conductance and latent heat of fusion. The above equation is often called the Stefan Condition and can once again be derived using conservation of energy. The stefan condition can also be understood intuitively: Consider the case where there is no phase change along the interface. The absence of phase change is another way of saying that $\boldsymbol{v}(\boldsymbol{x}) \cdot \boldsymbol{n} = 0$.  This implies that the heat flux going into the interface from the solid side $\frac{\partial T} {\partial \boldsymbol n}|_s$ is equal to the heat flux leaving the interface from the liquid side $\frac{\partial T} {\partial \boldsymbol n}|_l$. If the two are not equal to each other, then their difference must go towards either melting or freezing. That's all this equation is saying, the difference in heat fluxes along the interface is proportional to the speed at which the interface moves. The equation above is usually rewritten like below, to emphasize we only care about the magnitude of the speed along the normal direction, and that we can calculate the flux of temperature along the normal to be the temperature gradient, dotted with the normal.
 $$
 V_n=D (\nabla T |_s - \nabla T|_l)\cdot \boldsymbol{n(\boldsymbol{x})}  \quad \quad \quad \boldsymbol{x} \in \Gamma
@@ -31,9 +32,9 @@ T(\boldsymbol{x}) = T_M \quad \quad \quad \boldsymbol{x}  \in \Gamma
 $$
 
 Where $T_M = 273\degree K = 0\degree C$ for ice. This is a completely reasonable answer, and works well for modelling large scale freezing and melting processes, such as an ice sculpture melting, or the  freezing of a lake starting from the top and going downwards. However, many of the interesting visual frost phenomena we observe occur at a smaller scale, where surface tension of the ice plays a non-negligible role. You can think of surface tension as being a force present in the ice that tries to keep the surface as smooth as possible. Surface tension is easily modelled by the Gibbs-Thomson equation, which simply replaces the temperature equation above with the following:
-
 $$
-T(\boldsymbol{x}) = T_M(1 - \sigma \kappa )\quad \quad \quad \boldsymbol{x}  \in \Gamma $$
+T(\boldsymbol{x}) = T_M(1 - \sigma \kappa )\quad \quad \quad \boldsymbol{x}  \in \Gamma 
+$$
 
 Where $\sigma$ represents the strength of the surface tension force and is often called the capillary length, $\kappa$ represents curvature (positive if the center of curvature is inside the solid, negative outside). Let's gain some intuition about this formula. Assume $\sigma$ is constant $\sigma = 0.002$. Imagine a 2D scenario where your interface is represented as a straight line, $\Gamma(\boldsymbol{x}) = 0$. Now let's say the interface is perturbed by a sine wave, so now your interface is given by the equation $\Gamma(\boldsymbol{x}) = sin(f\boldsymbol{x})$ where f represents frequency. You can convince yourself that $f$ implicitly encodes the curvature along the sine wave. 
  If you have a very low frequency $f \approx 0$, then you can see that the curvature along the peaks of your sin wave will be very very small. This means the temperature according to Gibbs-Thomson along your sine wave is close to the bulk melting temperature $T_M$. In fact, if the curvature is zero, we get back our planar interface where the curvature everywhere is zero and the melting temperature is then *exactly* the bulk melting temperature $T_M$. However, if you have a high frequency $f >> 0$, you'll have a lot of waves in a small area and your curvature will be very, very high along the peaks of your sin waves. Plugging this information into the Gibbs-Thomson equation, we can see that surface tension will have a non-negligible effect, ie the temperature at the interface will not be the same as the bulk melting temperature $T_M$, but will in fact be lower at the peaks, and higher at the crests.
@@ -79,6 +80,7 @@ To solve the Laplace equation with these Dirichlet Boundary conditions, we will 
 $$
 \boldsymbol v^* = \min_\boldsymbol{v} \boldsymbol v \boldsymbol C \boldsymbol v^T
 $$
+
 Where $\boldsymbol C$ is the cotan Laplacian matrix.  See the libigl tutorial on how to derive this! We can use `mqwf` from lilbigl to solve this energy minimization problem.
 
 ### Move Interface In Time
@@ -86,10 +88,12 @@ Moving the interface in time is a little more involved than the simple Laplace e
 $$
 V_n=D (\nabla T |_s - \nabla T|_l)\cdot \boldsymbol{n}  \quad \quad \quad \boldsymbol{x} \in \Gamma
 $$
+
 Where $D$ is a known constant. The main unknown we have in this equation is finding the gradient of our temperature field along every vertex in the interface. Note that because our shape functions used in our FEM discretization are piecewise linear, the gradient of the temperature field is *constant* along each triangle face. Furthermore, each edge in our interface has *two* triangle faces associated with it; one triangle face belonging to the solid domain, and one belonging to the liquid. Therefore the gradient quantities we are interested in the above equation, $\nabla T |_s$ and $\nabla T|_l$ are well defined along an interface edge. We calculate the gradient at each face using the $\boldsymbol G$ operator as defined by libigl and multiplying the temperature field by it. This will give a gradient vector for each face. So, we carefully have to go through each countouring edge in our interface, find the incident faces on that edge, index the temperature gradient vector, and dot the difference in gradients with the normal vector $\boldsymbol n$ associated with each edge. 
 
 Note that this gives us a scalar $V_n$ quantity associated with each edge, indicating the velocity of each "point" along that edge would move along it's corresponding normal direction. This causes a problem for us however, because we can't directly move the edges, if we wish to maintain mesh connectivity,  we can only move the vertices! So we have a desired motion associated with each edge, and we wish to move our vertices to best match that motion. This is also known as a face offsetting problem in Geometry Processing. These can be solved naively in 2D by moving each edge independently by the offset, then recalculating it's intersection point with its neighboring edges. We take a different approach and instead formulate an energy we wish to minimize for the optimal vertex motion. The continuous version of our energy is given by :
-$$\min_{\overline{v}_i \forall i \in |V|} \int_\Gamma (\overline{v}_t(s)\cdot \hat{n} - \overline{v}(s) \cdot \hat{n})^2 ds
+$$
+\min_{\overline{v}_i \forall i \in |V|} \int_\Gamma (\overline{v}_t(s)\cdot \hat{n} - \overline{v}(s) \cdot \hat{n})^2 ds
 $$
 
 Unpacking this, we want that for each point in our smooth *not-yet-discrete* contour to have a solution velocity $\overline{v}(s)$ that, when projected to the normal, be as close as possible to a target velocity $\overline{v}_t(s)$, where $s$ represents the parameter in our arclength parameterized curve. 
@@ -98,6 +102,7 @@ This results in the following discretized energy:
 $$
 \boldsymbol{V}^* =\min_{\boldsymbol{V}} \boldsymbol{V}^T\boldsymbol{M}\boldsymbol{V}-2\boldsymbol{V}_{pn}^T\boldsymbol{A}\boldsymbol{V} 
 $$
+
 Where $\boldsymbol{V}$ is a $(|N_v| \times 3)$ matrix, where each row represents a velocity vector we wish to solve for all vertices $N_v$. $V_{pn}$ is a $(|N_e| \times 1)$ vector that represents the target velocity projected to the normal at that point, in our case it would be the velocity given at each edge by our Stefan Condition, dotted with the normal of that edge, for all edges $N_e$. M is a $(|N_v| \times |N_v|)$ mass matrix derived in this document, and is calculated by integrating the shape functions along each edge, dotted with the normal. A is a $(|N_e| \times |N_v|)$ matrix that projects the influence of each edge onto the vertices to which it is incident, dotted with some normals. Detailed explanations on how to assemble these matrices is given in this pdf.
 This energy is well suited for our problem because it is well defined along our discretized interface. Unlike other face offsetting problems, this energy keeps corners sharp and gives a well defined velocity for each vertex.
 
