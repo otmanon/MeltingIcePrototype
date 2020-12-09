@@ -1,6 +1,7 @@
 
+Link to related youtube video [here](https://youtu.be/-rAsqgfy_sw).
 # Dendritic Freezing Using Finite Elements
-This project aims to model freezing by using Finite Element Meshes. Specifically we aim to model some common branching/dendritic phenomena we observe in winter sceneries.
+This project aims to model freezing by using Finite Element Meshes. Specifically we aim to model some common branching/dendritic phenomena we observe in winter sceneries. 
 
 ![enter image description here](https://i.pinimg.com/originals/c8/ef/3b/c8ef3bab645b5d451d3e44e89b2c8322.jpg)
  [Freezing occurs when a water particle collides with the surface of a pre-existing ice structure, has the correct temperature profile to freeze (mainly that it is below the freezing temperature of water) *and* it can find an appropriate bonding spot to attach itself to said surface](https://www.its.caltech.edu/~atomic/publist/rpp5_4_R03.pdf).  Unpacking this, we will see there are three main main contributions to the freezing process, the transportation and motion of a free water particle through space, the transportation of heat through space, and finally the ability for the particle to find a bonding location in the ice. 
