@@ -2,14 +2,14 @@ clear;
 
 res = 20;       %resolution of line we wish to make. 
 maxArea = 1;  %maximum triangle area for remesher
-bboxL = 30; %bounding box length
-bboxW = 30; %bounding box width
+bboxL = 40; %bounding box length
+bboxW = 40; %bounding box width
 
 c = 0.05; %surface tension
 dt = 0.01; %timestep size
 bbT = -10; %boundary temperatue... switch to positive if you wanna see melting
 meshScale = 10; % how big should our mesh be.  Usually from 1 to 10 is good depending on size of bbox and input mesh and maxArea
-meshName = "data/pentagonHighRes.obj"
+meshName = "../data/pentagonHighRes.obj"
 [V, F, intF, extF, T, avgL] = init(maxArea, bboxL, bboxW, c, bbT, meshScale, meshName);
 
 
