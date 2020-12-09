@@ -1,5 +1,6 @@
 
 Link to related youtube video [here](https://youtu.be/-rAsqgfy_sw).
+Link to related github page [here](https://github.com/otmanon/MeltingIcePrototype.git).
 # Dendritic Freezing Using Finite Elements
 This project aims to model freezing by using Finite Element Meshes. Specifically we aim to model some common branching/dendritic phenomena we observe in winter sceneries. 
 
