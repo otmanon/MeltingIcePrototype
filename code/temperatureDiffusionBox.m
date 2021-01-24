@@ -42,12 +42,25 @@ end
 
 function [Tb, bi] = gibbsThomsonBoundaryConditions(V, intF, c)
    % cornerInds = unique(corners);
-    S = boundary_faces(intF);   
-    [RV, g2l, l2g, RS] = remove_unreferenced(V, S);
-    
-    [k, alpha, ev] = curvature(RV, RS);
+    mode =4;
    
-    Tb = -k * c;
+    S = boundary_faces(intF);   
+
+    [RV, g2l, l2g, RS] = remove_unreferenced(V, S);
+         BC = barycenter(RV, RS);
+    [k, alpha, ev] = curvature(RV, RS);
+    eNormals = perEdgeNormals(RV, RS);
+    eAxis = repmat([1, 0], size(eNormals, 1), 1);
+    theta = acos(dot(eAxis', eNormals'));
+    sigma = c.*( 1 - cos((theta).*mode));
+    sigmaV = zeros(size(sigma, 1), 1);
+    sigmaV(RS(:, 1)) = sigma;
+    sigmaV(RS(:, 2)) = sigmaV(RS(:, 2)) + sigma;
+    Tb = -k .* sigmaV';
+    n = eNormals;
+    n = n .* c; %sigma';
+    
+    %quiver(BC(:, 1), BC(:, 2), n(:, 1), n(:, 2));
     bi = l2g;
     
 end

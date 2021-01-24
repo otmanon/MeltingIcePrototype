@@ -1,6 +1,6 @@
 clear; 
-
-res = 50;       %resolution of line we wish to make. 
+addpath('function');
+res = 60;       %resolution of line we wish to make. 
 maxArea = 0.1;  %maximum triangle area for remesher
 bboxH = 10; %bounding box length
 bboxW = 20; %bounding box width
@@ -43,8 +43,8 @@ for step = 1:10000
      p2.Faces = intF;
     drawnow;
 
-    if mod(step, 10) == 1
-   %     figgif(strcat(strcat("../gifs/snowflakest", num2str(c)), "numBumps",num2str(numBumps), ".gif"));
+    if mod(step, 5) == 1
+        figgif(strcat(strcat("../gifs/perturbedGrowthIsotropic0", num2str(c)), "numBumps",num2str(numBumps), ".gif"));
     end
     
 end

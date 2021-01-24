@@ -5,7 +5,7 @@ function [V, F, intF, extF, avgL] = disturbedPlanarSetUp( maxArea, bboxL, bboxW,
 
     [V, E] = buildStraightLine(res, startPoint, stopPoint);
     V = perturbStraightLine(V,bboxL, bboxW, numBumps, bumpSize);
-    avgL =  norm(edge_lengths(V, E));
+    avgL = mean(edge_lengths(V, E));
     [Vembedded, Ei, S, corners] = embedLineInBoundingBox(V, E, bboxL, bboxW);
     H = [];
     [V,F,nbs] = triangle(Vembedded, Ei, H,'MaxArea', maxArea, 'Quality');

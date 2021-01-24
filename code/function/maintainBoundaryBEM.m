@@ -1,15 +1,15 @@
 %Takes vertices with edges connecting them, ensures the edges are within a
 %range of distances with each other, otherwise subdivides
 %   Detailed explanation goes here
-function [QV, QS] = maintainBoundaryQuality(V, S, bbsize, avgLength)
+function [QV, QS] = maintainBoundaryBEM(V, S, bbsize, avgLength)
     maxLength = avgLength + avgLength/2;
-    minLength = avgLength - avgLength/2;
+    minLength = avgLength - avgLength/1.1;
     [V1, S1] = subdivideLargeEdges(V, S, maxLength);
-    [V2, S2] = mergeSmallEdges(V1, S1, minLength);
+   % [V2, S2] = mergeSmallEdges(V1, S1, minLength);
 %=      [V3, S3] = subdivideLargeEdges(V2, S2, maxLength);
 %      [V4, S4] = mergeSmallEdges(V3, S3, minLength);
-    QV = V2;
-    QS = S2;
+    QV = V1;
+    QS = S1;
 end
 
 function [Vout, Sout] = subdivideLargeEdges(V, S, maxLength)
@@ -22,7 +22,7 @@ function [Vout, Sout] = subdivideLargeEdges(V, S, maxLength)
     if (size(largeInd, 1) > 0)
         newEdgeMidpoints = (V(S(largeInd(:), 2), :) + V(S(largeInd(:), 1), :))/2;
     
-        newVIndices = numOldV+1:numOldV+numNewV;
+        newVIndices = (numOldV+1):(numOldV+numNewV);
 
         oldEdgeCopy = S(largeInd, :);
 
